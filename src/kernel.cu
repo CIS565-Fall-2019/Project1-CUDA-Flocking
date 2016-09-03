@@ -450,8 +450,8 @@ void Boids::unitTest() {
   }
 
   // cleanup
-  delete(intKeys);
-  delete(intValues);
+  delete[] intKeys;
+  delete[] intValues;
   cudaFree(dev_intKeys);
   cudaFree(dev_intValues);
   checkCUDAErrorWithLine("cudaFree failed!");
