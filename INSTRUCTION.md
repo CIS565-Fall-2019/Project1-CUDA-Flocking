@@ -89,6 +89,9 @@ We also have a simple [2D implementation in Processing](http://studio.sketchpad.
 that is very conceptually similar to what you will be writing. Feel free to use
 this implementation as a math/code reference.
 
+For an idea of how the simulation "should" look in 3D,
+[here's what our reference implementation looks like.](https://vimeo.com/181547860)
+
 ### 1.2. Code walkthrough
 
 * `src/main.cpp`: Performs all of the CUDA/OpenGL setup and OpenGL
