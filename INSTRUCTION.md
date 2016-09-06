@@ -85,7 +85,7 @@ for some quick pseudocode. For the purposes of an interesting simulation,
 we will say that two boids only influence each other according if they are
 within a certain **neighborhood distance** of each other.
 
-We also have a simple [2D implementation in Processing](http://studio.sketchpad.cc/sp/pad/view/3eT27PRCFM/latest)
+We also have a simple [2D implementation in Processing](http://studio.sketchpad.cc/sp/pad/view/ro.9cbgCRcgbPOI6/rev.23)
 that is very conceptually similar to what you will be writing. Feel free to use
 this implementation as a math/code reference.
 
