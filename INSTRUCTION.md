@@ -80,8 +80,65 @@ and compute the velocity change contribution from each of the three rules.
 Thus, a bare-bones boids implementation has each boid check every other boid in
 the simulation.
 
-Please take a look at [Conard Parker's notes](http://www.vergenet.net/~conrad/boids/pseudocode.html)
-for some quick pseudocode. For the purposes of an interesting simulation,
+Here is some quick pseudocode to help you out:
+
+#### Rule 1: Boids try to fly towards the centre of mass of neighbouring boids
+
+```
+function rule1(Boid boid)
+
+    Vector perceived_center
+
+    foreach Boid b:
+        if b != boid and distance(b, boid) < rule1Distance then
+            perceived_center += b.position
+        endif
+    end
+
+    perceived_center /= N-1
+
+    return (perceived_center - boid.position) * rule1Scale
+end
+```
+
+#### Rule 2: Boids try to keep a small distance away from other objects (including other boids).
+
+```
+function rule2(Boid boid)
+
+    Vector c = 0
+
+    foreach Boid b
+        if b != boid and distance(b, boid) < rule2Distance then
+            if |b.position - boid.position| < 100 then
+                c -= (b.position - boid.position)
+            endif
+        endif
+    end
+
+    return c * rule2Scale
+end
+```
+
+#### Rule 3: Boids try to match velocity with near boids.
+
+```
+function rule3(Boid boid)
+
+    Vector perceived_velocity
+
+    foreach Boid b
+        if b != boid and distance(b, boid) < rule3Distance then
+            perceived_velocity += b.velocity
+        endif
+    end
+
+    perceived_velocity /= N-1
+
+    return perceived_velocity * rule3Scale
+end
+```
+Based on [Conard Parker's notes](http://www.vergenet.net/~conrad/boids/pseudocode.html) with slight adaptations. For the purposes of an interesting simulation,
 we will say that two boids only influence each other according if they are
 within a certain **neighborhood distance** of each other.
 
@@ -252,10 +309,12 @@ mesasurements! However, the tools are very useful for performance debugging.
 
 ## Part 4: Write-up
 
-1. Take a screenshot, or a gif using a tool like [licecap](http://www.cockos.com/licecap/).
+1. Take a screenshot of the boids **and** use a gif tool like [licecap](http://www.cockos.com/licecap/) to record an animations of the boids with a fixed camera.
 Put this at the top of your README.md. Take a look at [How to make an attractive
 GitHub repo](https://github.com/pjcozzi/Articles/blob/master/CIS565/GitHubRepo/README.md).
-2. Add your performance analysis.
+2. Add your performance analysis. Graphs to include:
+- Framerate change with increasing # of boids for naive, scattered uniform grid, and coherent uniform grid (with and without visualization)
+- Framerate change with increasing block size
 
 ## Submit
 
@@ -289,3 +348,6 @@ See `Boids::unitTest` in `kernel.cu` for an example of how to use this.
 - Your README.md will be done in github markdown. You can find a [cheatsheet here](https://guides.github.com/pdfs/markdown-cheatsheet-online.pdf). There is
 also a [live preview plugin](https://atom.io/packages/markdown-preview) for the
 [atom text editor](https://atom.io/) from github. The same for [VS Code](https://www.visualstudio.com/en-us/products/code-vs.aspx)
+
+## Optional Extra Credit
+Add fast nearest neighbor search using shared memory and the uniform grid. If you choose to tackle this problem, have it done before Project 5. Include additional graphs and performance analysis, showing clearly how much better the program performed using shared memory.
