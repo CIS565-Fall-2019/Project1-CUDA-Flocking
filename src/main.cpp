@@ -2,7 +2,7 @@
 * @file      main.cpp
 * @brief     Example Boids flocking simulation for CIS 565
 * @authors   Liam Boone, Kai Ninomiya, Kangning (Gary) Li
-* @date      2013-2016
+* @date      2013-2017
 * @copyright University of Pennsylvania
 */
 

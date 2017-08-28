@@ -1,7 +1,7 @@
 CUDA Introduction - Flocking
 ============================
 
-This is due Tuesday, September 13.
+This is due Sunday, September 10.
 
 **Summary:** In this project, you will get some real experience writing simple
 CUDA kernels, using them, and analyzing their performance. You'll implement a

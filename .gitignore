@@ -211,7 +211,7 @@ install_manifest.txt
 *.la
 *.a
 *.lib
-!/external/lib/*/*
+!/external/lib/*/**/*
 
 # Executables
 *.exe
