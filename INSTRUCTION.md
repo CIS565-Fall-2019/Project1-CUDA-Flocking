@@ -110,9 +110,7 @@ function rule2(Boid boid)
 
     foreach Boid b
         if b != boid and distance(b, boid) < rule2Distance then
-            if |b.position - boid.position| < 100 then
-                c -= (b.position - boid.position)
-            endif
+            c -= (b.position - boid.position)
         endif
     end
 
