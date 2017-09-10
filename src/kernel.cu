@@ -169,7 +169,7 @@ void Boids::initSimulation(int N) {
   gridMinimum.z -= halfGridWidth;
 
   // TODO-2.1 TODO-2.3 - Allocate additional buffers here.
-  cudaThreadSynchronize();
+  cudaDeviceSynchronize();
 }
 
 
@@ -215,7 +215,7 @@ void Boids::copyBoidsToVBO(float *vbodptr_positions, float *vbodptr_velocities) 
 
   checkCUDAErrorWithLine("copyBoidsToVBO failed!");
 
-  cudaThreadSynchronize();
+  cudaDeviceSynchronize();
 }
 
 
