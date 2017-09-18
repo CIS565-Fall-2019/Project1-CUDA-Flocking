@@ -301,7 +301,8 @@ affect performance? Why do you think this is?
 with the more coherent uniform grid? Was this the outcome you expected?
 Why or why not?
 * Did changing cell width and checking 27 vs 8 neighboring cells affect performance?
-Why or why not?
+Why or why not? Be careful: it is insufficient (and possibly incorrect) to say
+that 27-cell is slower simply because there are more cells to check!
 
 **NOTE: Nsight performance analysis tools *cannot* presently be used on the lab
 computers, as they require administrative access.** If you do not have access
