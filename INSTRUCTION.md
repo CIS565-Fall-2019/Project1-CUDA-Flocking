@@ -53,7 +53,7 @@ some output in the console window and a cube of gray particles. The viewer is
 equipped with camera controls: left-click and drag to move the camera view,
 right-click and drag vertically to zoom in and out.
 
-**NOTE: Build the project in `release` mode for performance analysis.**
+**NOTE: Build the project in `release` mode for performance analysis and capturing.**
 
 On some configurations (commonly on lab machines), the unmodified code built in
 `release` mode crashes mysteriously with an
