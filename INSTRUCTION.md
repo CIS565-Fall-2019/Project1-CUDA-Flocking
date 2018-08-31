@@ -1,7 +1,7 @@
 CUDA Introduction - Flocking
 ============================
 
-This is due Sunday, September 10.
+This is due Sunday, September 9.
 
 **Summary:** In this project, you will get some real experience writing simple
 CUDA kernels, using them, and analyzing their performance. You'll implement a
@@ -52,6 +52,8 @@ key-value sorting on the GPU. If everything is working right, you should see
 some output in the console window and a cube of gray particles. The viewer is
 equipped with camera controls: left-click and drag to move the camera view,
 right-click and drag vertically to zoom in and out.
+
+**NOTE: Build the project in `release` mode for performance analysis.
 
 On some configurations (commonly on lab machines), the unmodified code built in
 `release` mode crashes mysteriously with an

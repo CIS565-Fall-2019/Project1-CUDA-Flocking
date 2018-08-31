@@ -400,8 +400,8 @@ void Boids::unitTest() {
   int *dev_intValues;
   int N = 10;
 
-  int *intKeys = new int[N];
-  int *intValues = new int[N];
+  std::unique_ptr<int[]>intKeys{ new int[N] };
+  std::unique_ptr<int[]>intValues{ new int[N] };
 
   intKeys[0] = 0; intValues[0] = 0;
   intKeys[1] = 1; intValues[1] = 1;
@@ -429,8 +429,8 @@ void Boids::unitTest() {
   }
 
   // How to copy data to the GPU
-  cudaMemcpy(dev_intKeys, intKeys, sizeof(int) * N, cudaMemcpyHostToDevice);
-  cudaMemcpy(dev_intValues, intValues, sizeof(int) * N, cudaMemcpyHostToDevice);
+  cudaMemcpy(dev_intKeys, intKeys.get(), sizeof(int) * N, cudaMemcpyHostToDevice);
+  cudaMemcpy(dev_intValues, intValues.get(), sizeof(int) * N, cudaMemcpyHostToDevice);
 
   // Wrap device vectors in thrust iterators for use with thrust.
   thrust::device_ptr<int> dev_thrust_keys(dev_intKeys);
@@ -439,8 +439,8 @@ void Boids::unitTest() {
   thrust::sort_by_key(dev_thrust_keys, dev_thrust_keys + N, dev_thrust_values);
 
   // How to copy data back to the CPU side from the GPU
-  cudaMemcpy(intKeys, dev_intKeys, sizeof(int) * N, cudaMemcpyDeviceToHost);
-  cudaMemcpy(intValues, dev_intValues, sizeof(int) * N, cudaMemcpyDeviceToHost);
+  cudaMemcpy(intKeys.get(), dev_intKeys, sizeof(int) * N, cudaMemcpyDeviceToHost);
+  cudaMemcpy(intValues.get(), dev_intValues, sizeof(int) * N, cudaMemcpyDeviceToHost);
   checkCUDAErrorWithLine("memcpy back failed!");
 
   std::cout << "after unstable sort: " << std::endl;
@@ -450,8 +450,6 @@ void Boids::unitTest() {
   }
 
   // cleanup
-  delete[] intKeys;
-  delete[] intValues;
   cudaFree(dev_intKeys);
   cudaFree(dev_intValues);
   checkCUDAErrorWithLine("cudaFree failed!");

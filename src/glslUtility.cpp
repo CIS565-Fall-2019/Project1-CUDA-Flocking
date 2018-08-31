@@ -12,6 +12,7 @@
 #include <string>
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include "glslUtility.hpp"
 
 using std::ios;
@@ -47,32 +48,28 @@ char* loadFile(const char *fname, GLint &fSize) {
 void printShaderInfoLog(GLint shader) {
     int infoLogLen = 0;
     int charsWritten = 0;
-    GLchar *infoLog;
 
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLen);
 
     if (infoLogLen > 1) {
-        infoLog = new GLchar[infoLogLen];
+        std::unique_ptr<GLchar[]> infoLog{ new GLchar[infoLogLen] };
         // error check for fail to allocate memory omitted
-        glGetShaderInfoLog(shader, infoLogLen, &charsWritten, infoLog);
-        std::cout << "InfoLog:" << std::endl << infoLog << std::endl;
-        delete [] infoLog;
+        glGetShaderInfoLog(shader, infoLogLen, &charsWritten, infoLog.get());
+        std::cout << "InfoLog:" << std::endl << infoLog.get() << std::endl;
     }
 }
 
 void printLinkInfoLog(GLint prog) {
     int infoLogLen = 0;
     int charsWritten = 0;
-    GLchar *infoLog;
 
     glGetProgramiv(prog, GL_INFO_LOG_LENGTH, &infoLogLen);
 
     if (infoLogLen > 1) {
-        infoLog = new GLchar[infoLogLen];
+        std::unique_ptr<GLchar[]> infoLog{ new GLchar[infoLogLen] };
         // error check for fail to allocate memory omitted
-        glGetProgramInfoLog(prog, infoLogLen, &charsWritten, infoLog);
-        std::cout << "InfoLog:" << std::endl << infoLog << std::endl;
-        delete [] infoLog;
+        glGetProgramInfoLog(prog, infoLogLen, &charsWritten, infoLog.get());
+        std::cout << "InfoLog:" << std::endl << infoLog.get() << std::endl;
     }
 }
 
