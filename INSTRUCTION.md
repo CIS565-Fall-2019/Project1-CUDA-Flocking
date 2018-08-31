@@ -269,7 +269,9 @@ metric, but adding your own `cudaTimer`s, etc., will allow you to do more
 fine-grained benchmarking of various parts of your code.
 
 REMEMBER:
-* Do your performance testing in Release mode!
+* Do your performance testing in `Release` mode!
+* Turn off Vertical Sync in Nvidia Control Panel:
+![Unlock FPS](images/UnlockFPS.png)
 * Performance should always be measured relative to some baseline when
   possible. A GPU can make your program faster - but by how much?
 * If a change impacts performance, show a comparison. Describe your changes.
