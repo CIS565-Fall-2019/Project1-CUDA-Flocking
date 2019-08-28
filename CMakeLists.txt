@@ -1,100 +1,89 @@
 cmake_minimum_required(VERSION 3.1)
-
 project(cis565_boids)
 
-set(CL_PATH "D:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.16.27023/bin/Hostx86/x64/cl.exe") 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-# Set up include and lib paths
-set(EXTERNAL "external")
-include_directories("${EXTERNAL}/include")
-include_directories("${EXTERNAL}/src")
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(EXTERNAL_LIB_PATH "${EXTERNAL}/lib/osx")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set(EXTERNAL_LIB_PATH "${EXTERNAL}/lib/linux" "/usr/lib64")
-elseif(WIN32)
-    if(${MSVC_VERSION} MATCHES "1916") 
-        set(EXTERNAL_LIB_PATH "${EXTERNAL}/lib/win/vc2017") 
-        if ("${CL_PATH}" MATCHES "NULL")
-            MESSAGE("Error: please set CL_PATH to a correct path to cl.exe. Edit this in CMakeLists.txt under the project root.") 
-        endif() 
-        set(CUDA_HOST_COMPILER "${CL_PATH}") 
-    elseif(${MSVC_VERSION} MATCHES "1900") 
-        set(EXTERNAL_LIB_PATH "${EXTERNAL}/lib/win/vc2015")
-    elseif(${MSVC_VERSION} MATCHES "1800")
-        set(EXTERNAL_LIB_PATH "${EXTERNAL}/lib/win/vc2013")
-    elseif(${MSVC_VERSION} MATCHES "1700")
-        set(EXTERNAL_LIB_PATH "${EXTERNAL}/lib/win/vc2012")
-    else()
-        MESSAGE("Error: unsupported MSVC_VERSION: " ${MSVC_VERSION})
-    endif()
-endif()
-link_directories(${EXTERNAL_LIB_PATH})
-list(APPEND CMAKE_LIBRARY_PATH "${EXTERNAL_LIB_PATH}")
-
-# Find up and set up core dependency libs
-
-set(GLFW_INCLUDE_DIR "${EXTERNAL}/include")
-set(GLFW_LIBRARY_DIR "${CMAKE_LIBRARY_PATH}")
-find_library(GLFW_LIBRARY "glfw3" HINTS "${GLFW_LIBRARY_DIR}")
-
-set(GLEW_INCLUDE_DIR "${EXTERNAL}/include")
-set(GLEW_LIBRARY_DIR "${CMAKE_LIBRARY_PATH}")
-add_definitions(-DGLEW_STATIC)
-find_package(GLEW)
-
-find_package(OpenGL)
-
-set(CORELIBS
-    "${GLFW_LIBRARY}"
-    "${OPENGL_LIBRARY}"
-    "${GLEW_LIBRARY}"
-    )
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Enable C++11 for host code
 set(CMAKE_CXX_STANDARD 11)
 
-# Enable CUDA debug info in debug mode builds
-list(APPEND CUDA_NVCC_FLAGS_DEBUG -G -g)
-
-# OSX-specific hacks/fixes
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    list(APPEND CORELIBS "-framework IOKit")
-    list(APPEND CORELIBS "-framework Cocoa")
-    list(APPEND CORELIBS "-framework CoreVideo")
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+    # Set the possible values of build type for cmake-gui
+    SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# Linux-specific hacks/fixes
-if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    find_package(X11 REQUIRED)
-    list(APPEND CORELIBS ${X11_LIBRARIES} ${X11_Xrandr_LIB} ${X11_Xxf86vm_LIB} ${X11_Xi_LIB})
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lX11 -lXxf86vm -lXrandr -lXi")
-endif()
-
-# Crucial magic for CUDA linking
-find_package(Threads REQUIRED)
+########################################
+# CUDA Setup
+########################################
 find_package(CUDA 10.0 REQUIRED)
+include(${CMAKE_MODULE_PATH}/CUDAComputesList.cmake)
 
-set(CUDA_ATTACH_VS_BUILD_RULE_TO_CUDA_FILE ON)
-set(CUDA_SEPARABLE_COMPILATION ON)
+list(APPEND CUDA_NVCC_FLAGS ${CUDA_GENERATE_CODE})
+list(APPEND CUDA_NVCC_FLAGS_DEBUG "-g -G")
+set(CUDA_VERBOSE_BUILD ON)
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-endif()
+if(WIN32)
+    # Set up include and lib paths
+    set(CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER} CACHE FILEPATH "Host side compiler used by NVCC" FORCE)
+endif(WIN32)
+########################################
 
-add_subdirectory(src)
+find_package(OpenGL REQUIRED)
 
-cuda_add_executable(${CMAKE_PROJECT_NAME}
-    "src/main.hpp"
-    "src/main.cpp"
+if(UNIX)
+    find_package(glfw3 REQUIRED)
+    find_package(GLEW REQUIRED)
+    set(LIBRARIES glfw ${GLEW_LIBRARIES} ${OPENGL_gl_LIBRARY})
+else(UNIX)
+    set(EXTERNAL "external")
+
+    set(GLFW_ROOT_DIR ${EXTERNAL})
+    set(GLFW_USE_STATIC_LIBS ON)
+    find_package(GLFW REQUIRED)
+
+    set(GLEW_ROOT_DIR ${EXTERNAL})
+    set(GLEW_USE_STATIC_LIBS ON)
+    find_package(GLEW REQUIRED)
+
+    add_definitions(${GLEW_DEFINITIONS})
+    include_directories(${GLEW_INCLUDE_DIR} ${GLFW_INCLUDE_DIR})
+    set(LIBRARIES ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${OPENGL_LIBRARY})
+endif(UNIX)
+
+set(GLM_ROOT_DIR "external")
+find_package(GLM REQUIRED)
+include_directories(${GLM_INCLUDE_DIRS})
+
+set(headers
+    src/cudaMat4.hpp
+    src/glslUtility.hpp
+    src/kernel.h
+    src/main.hpp
+    src/utilityCore.hpp
     )
 
-target_link_libraries(${CMAKE_PROJECT_NAME}
-    src
-    ${CORELIBS}
+set(sources
+    src/glslUtility.cpp
+    src/kernel.cu
+    src/main.cpp
+    src/utilityCore.cpp
     )
+
+list(SORT headers)
+list(SORT sources)
+
+source_group(Headers FILES ${headers})
+source_group(Sources FILES ${sources})
+
+cuda_add_executable(${CMAKE_PROJECT_NAME} ${sources} ${headers})
+target_link_libraries(${CMAKE_PROJECT_NAME} ${LIBRARIES})
 
 add_custom_command(
     TARGET ${CMAKE_PROJECT_NAME}
