@@ -11,8 +11,8 @@ of optimization: a uniform grid, and a uniform grid with semi-coherent memory ac
 ## Part 0: Nothing New
 
 This project (and all other CUDA projects in this course) requires an NVIDIA
-graphics card with CUDA capability. Any card with Compute Capability 2.0
-(`sm_20`) or greater will work. Check your GPU on this
+graphics card with CUDA capability. Any card with Compute Capability 3.0
+(GTX 6xx and newer) or greater will work. Check your GPU on this
 [compatibility table](https://developer.nvidia.com/cuda-gpus).
 If you do not have a personal machine with these specs, you may use those
 computers in the Moore 100B/C which have supported GPUs, but pay close
@@ -42,7 +42,7 @@ builds.
 
 **CMake note:** Do not change any build settings or add any files to your
 project directly (in Visual Studio, Nsight, etc.) Instead, edit the
-`src/CMakeLists.txt` file. Any files you create must be added here. If you edit
+`CMakeLists.txt` file. Any files you create must be added here. If you edit
 it, just rebuild your VS/Nsight project to sync the changes into the IDE.
 
 Please run the project without modifications to ensure that everything works
@@ -54,17 +54,6 @@ equipped with camera controls: left-click and drag to move the camera view,
 right-click and drag vertically to zoom in and out.
 
 **NOTE: Build the project in `release` mode for performance analysis and capturing.**
-
-On some configurations (commonly on lab machines), the unmodified code built in
-`release` mode crashes mysteriously with an
-`exception: thrust::system::system_error` at some memory location.
-This can happen because the compute capability specified in `src/CMakeLists.txt`
-does not match your GPU's compute capability.
-Look up your compute capability version and change the `-arch=sm_20` flag to
-match. `sm_20` corresponds with compute capability 2.0, `sm_21` with 2.1,
-`sm_50` with 5.0, and so on.
-
-You will need to re-generate the project with cmake.
 
 ### 1.1. Boids with Naive Neighbor Search
 
