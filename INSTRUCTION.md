@@ -346,4 +346,9 @@ also a [live preview plugin](https://atom.io/packages/markdown-preview) for the
 - If your framerate is capped at 60fps, [disable V-sync](http://support.enmasse.com/tera/enable-v-sync-to-fix-graphics-issues-screen-tearing)
 
 ## Optional Extra Credit
+
+Shared-Memory Optimization:
 Add fast nearest neighbor search using shared memory and the uniform grid. If you choose to tackle this problem, have it done before Project 5. Include additional graphs and performance analysis, showing clearly how much better the program performed using shared memory.
+
+Grid-Looping Optimization:
+Instead of hard-coding a search of the designated area, limit the search area based on the grid cells that have any aspect of them within the max_distance. This prevents the excessive positional comparisons with the corner points of each grid cell, while at the same time also allowing a more flexible approach (since we're just defining a min cell index and max cell index in all three cardinal directions). That is, there is no longer a manual check for a hard-coded specific number of surrounding cells depending on the implementation (such as the 8 surrounding cells, 27 surrounding cells, etc).
