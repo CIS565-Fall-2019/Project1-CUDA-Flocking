@@ -22,7 +22,7 @@ endif()
 ########################################
 # CUDA Setup
 ########################################
-find_package(CUDA 10.0 REQUIRED)
+find_package(CUDA 10 REQUIRED)
 include(${CMAKE_MODULE_PATH}/CUDAComputesList.cmake)
 
 list(APPEND CUDA_NVCC_FLAGS ${CUDA_GENERATE_CODE})
