@@ -86,7 +86,7 @@ function rule1(Boid boid)
         endif
     end
 
-    perceived_center /= N-1
+    perceived_center /= number_of_neighbors
 
     return (perceived_center - boid.position) * rule1Scale
 end
@@ -122,7 +122,7 @@ function rule3(Boid boid)
         endif
     end
 
-    perceived_velocity /= N-1
+    perceived_velocity /= number_of_neighbors
 
     return perceived_velocity * rule3Scale
 end
